@@ -10,7 +10,7 @@ from .tui import run
 
 def main() -> int:
     # argparse가 도움말과 인자 오류를 처리하므로 별도의 명령 파서를 유지하지 않는다.
-    parser = argparse.ArgumentParser(prog="tiny", description="A deliberately tiny, model-driven coding CLI")
+    parser = argparse.ArgumentParser(prog="lightweight-harness", description="A lightweight, model-driven coding harness")
     parser.add_argument("--provider", help="configured provider name")
     parser.add_argument("--model", help="override configured model")
     parser.add_argument("--config", type=Path, help="provider and plugin configuration file")

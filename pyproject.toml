@@ -5,9 +5,9 @@ build-backend = "hatchling.build"
 
 [project]
 # 배포 이름과 버전이다. 패키지 내부의 __version__과 버전을 함께 관리한다.
-name = "tiny-cli"
+name = "lightweight-harness"
 version = "0.2.0"
-description = "A deliberately tiny, model-driven coding CLI"
+description = "A lightweight, model-driven coding harness"
 readme = "README.md"
 # 지원·검증하는 Python 하한을 선언해 설치 도구가 호환되는 인터프리터를 선택하게 한다.
 requires-python = ">=3.12"
@@ -22,9 +22,9 @@ dependencies = [
 dev = ["pytest>=8,<9"]
 
 [project.scripts]
-# 설치 도구가 tiny 실행 명령을 생성하고 공통 main 함수로 연결하게 한다.
-tiny = "tiny_cli.app:main"
+# 설치 도구가 lightweight-harness 실행 명령을 생성하고 공통 main 함수로 연결하게 한다.
+lightweight-harness = "lightweight_harness.app:main"
 
 [tool.hatch.build.targets.wheel]
 # 실행 패키지만 wheel에 포함해 테스트·문서·예제를 런타임 코드와 분리한다.
-packages = ["tiny_cli"]
+packages = ["lightweight_harness"]

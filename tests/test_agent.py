@@ -7,8 +7,8 @@ from types import ModuleType
 import httpx
 import pytest
 
-from tiny_cli.agent import Agent
-from tiny_cli.providers import ProviderConfig
+from lightweight_harness.agent import Agent
+from lightweight_harness.providers import ProviderConfig
 
 
 def call(name, arguments, call_id="call_1"):
@@ -122,7 +122,7 @@ def test_missing_plugin_is_an_explicit_failure():
     # 선택한 확장이 없는데 기본 코어로 조용히 계속 실행되는 일을 막는다.
     with client_for([], []) as client:
         with pytest.raises(RuntimeError, match="Could not load plugin"):
-            Agent(PROVIDER, plugins=["missing_tiny_test_plugin:setup"], client=client)
+            Agent(PROVIDER, plugins=["missing_lightweight_harness_test_plugin:setup"], client=client)
 
 
 def test_http_errors_are_not_retried():

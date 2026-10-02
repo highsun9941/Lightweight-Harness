@@ -1,4 +1,4 @@
-# ~/.config/tiny-cli/config.toml에 복사하거나 tiny --config /path/to/config.toml로 지정한다.
+# ~/.config/lightweight-harness/config.toml에 복사하거나 lightweight-harness --config /path/to/config.toml로 지정한다.
 # providers 아래의 프로필 키를 --provider 또는 /use로 선택한다.
 # CLI·환경변수에서 제공자를 선택하지 않았을 때 사용할 기본 프로필이다.
 default_provider = "openrouter"

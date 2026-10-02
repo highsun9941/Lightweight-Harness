@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from tiny_cli.tools import execute_tool, run_command
+from lightweight_harness.tools import execute_tool, run_command
 
 
 def test_shell_can_write_and_read_files_in_working_directory(tmp_path: Path, monkeypatch):

@@ -3,8 +3,8 @@ import json
 
 import httpx
 
-from tiny_cli.agent import Agent
-from tiny_cli.providers import ProviderConfig
+from lightweight_harness.agent import Agent
+from lightweight_harness.providers import ProviderConfig
 
 
 def test_anthropic_round_trip_preserves_blocks_and_groups_tool_results(tmp_path, monkeypatch):

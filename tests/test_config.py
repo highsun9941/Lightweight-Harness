@@ -3,8 +3,8 @@ import sys
 
 import pytest
 
-from tiny_cli.app import main
-from tiny_cli.providers import NoProviderError
+from lightweight_harness.app import main
+from lightweight_harness.providers import NoProviderError
 
 
 def test_main_starts_ui_without_provider(monkeypatch) -> None:
@@ -15,11 +15,11 @@ def test_main_starts_ui_without_provider(monkeypatch) -> None:
         # 일반 설정 오류가 아닌 '프로필 없음' 예외를 의도적으로 재현한다.
         raise NoProviderError("No provider configured. Add config")
 
-    monkeypatch.setattr("tiny_cli.app.resolve_provider", no_provider)
-    monkeypatch.setattr("tiny_cli.app.load_config", lambda *_args: {})
+    monkeypatch.setattr("lightweight_harness.app.resolve_provider", no_provider)
+    monkeypatch.setattr("lightweight_harness.app.load_config", lambda *_args: {})
     # 실제 터미널 UI를 열지 않고 전달된 제공자 값만 수집한다.
-    monkeypatch.setattr("tiny_cli.app.run", lambda provider, **_kwargs: started.append(provider))
-    monkeypatch.setattr(sys, "argv", ["tiny"])
+    monkeypatch.setattr("lightweight_harness.app.run", lambda provider, **_kwargs: started.append(provider))
+    monkeypatch.setattr(sys, "argv", ["lightweight-harness"])
 
     assert main() == 0
     assert started == [None]
@@ -35,12 +35,12 @@ def test_main_passes_provider_and_model_override(monkeypatch) -> None:
         model = "model-2"
 
     monkeypatch.setattr(
-        "tiny_cli.app.resolve_provider",
+        "lightweight_harness.app.resolve_provider",
         lambda name, model, path: captured.update(name=name, model=model) or Provider(),
     )
-    monkeypatch.setattr("tiny_cli.app.load_config", lambda *_args: {})
-    monkeypatch.setattr("tiny_cli.app.run", lambda provider, **_kwargs: captured.update(provider=provider))
-    monkeypatch.setattr(sys, "argv", ["tiny", "--provider", "custom", "--model", "model-2"])
+    monkeypatch.setattr("lightweight_harness.app.load_config", lambda *_args: {})
+    monkeypatch.setattr("lightweight_harness.app.run", lambda provider, **_kwargs: captured.update(provider=provider))
+    monkeypatch.setattr(sys, "argv", ["lightweight-harness", "--provider", "custom", "--model", "model-2"])
 
     assert main() == 0
     assert captured["name"] == "custom"
@@ -61,8 +61,8 @@ api_key_env = ""
 model = "local"
 ''')
     captured = {}
-    monkeypatch.setattr("tiny_cli.app.run", lambda provider, **kwargs: captured.update(provider=provider, **kwargs))
-    args = ["tiny", "--config", str(config), "--plugin", "explicit_plugin:setup"]
+    monkeypatch.setattr("lightweight_harness.app.run", lambda provider, **kwargs: captured.update(provider=provider, **kwargs))
+    args = ["lightweight-harness", "--config", str(config), "--plugin", "explicit_plugin:setup"]
     monkeypatch.setattr(sys, "argv", args + (["--no-plugins"] if disabled else []))
     assert main() == 0
     assert captured["config_path"] == config

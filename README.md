@@ -1,4 +1,4 @@
-# Tiny-CLI
+# Lightweight-Harness
 
 [![English](https://img.shields.io/badge/English-0969DA?style=for-the-badge)](README.md) [![한국어](https://img.shields.io/badge/%ED%95%9C%EA%B5%AD%EC%96%B4-555555?style=for-the-badge)](README.ko.md)
 
@@ -6,70 +6,72 @@
 
 As LLMs become more capable, we believe the harness around them should become lighter. Layering excessive system prompts and fixed workflows on top of the instructions and tool-use capabilities already supplied by models and API providers can interfere with the model's judgment and reduce its effectiveness.
 
-Tiny-CLI exposes **one shell tool, `run_command`, by default**. The model uses shell commands to read, search, and edit files, and to run tests. The runtime passes along user input, the current session's conversation, and tool results without automatically injecting its own system prompt or repository instructions. Planning, execution order, diagnosis, and retries are left to the model.
+Lightweight-Harness exposes **one shell tool, `run_command`, by default**. The model uses shell commands to read, search, and edit files, and to run tests. The runtime passes along user input, the current session's conversation, and tool results without automatically injecting its own system prompt or repository instructions. Planning, execution order, diagnosis, and retries are left to the model.
 
-Like CC Switch, Tiny-CLI lets you configure multiple API providers as profiles and switch between them. We aim to build an ecosystem where users can assemble only the features they want—harnesses, long-term memory, context compression, skills, and additional tools—from community plugins. For now, the project provides a small plugin entry point, with no plugins enabled by default.
+Like CC Switch, Lightweight-Harness lets you configure multiple API providers as profiles and switch between them. We aim to build an ecosystem where users can assemble only the features they want—harnesses, long-term memory, context compression, skills, and additional tools—from community plugins. For now, the project provides a small plugin entry point, with no plugins enabled by default.
 
-**There are no built-in safety guardrails. We recommend running Tiny-CLI in Docker.** File changes and shell commands run with the process's permissions, without a separate approval step.
+**There are no built-in safety guardrails. We recommend running Lightweight-Harness in Docker.** File changes and shell commands run with the process's permissions, without a separate approval step.
 
 ## Installation
 
 Install on Linux, macOS, or WSL with one command:
 
 ```bash
-# Use this repository's installer to prepare an isolated Python environment and the tiny command.
-curl -fsSL https://raw.githubusercontent.com/highsun9941/Tiny-CLI/main/install.sh | bash
+# Use this repository's installer to prepare an isolated Python environment and the lightweight-harness command.
+curl -fsSL https://raw.githubusercontent.com/highsun9941/Lightweight-Harness/main/install.sh | bash
 ```
 
-The installer prepares [uv](https://docs.astral.sh/uv/) and Python 3.12 if needed, then installs this repository's `main` branch in an isolated Python environment. You do not need Python or Git preinstalled, and the installer does not use `sudo`. Run `tiny` after installation. If `~/.local/bin` is not on your PATH, follow the instructions printed by the installer.
+The installer prepares [uv](https://docs.astral.sh/uv/) and Python 3.12 if needed, then installs this repository's `main` branch in an isolated Python environment. You do not need Python or Git preinstalled, and the installer does not use `sudo`. Run `lightweight-harness` after installation. If `~/.local/bin` is not on your PATH, follow the instructions printed by the installer.
 
 ```bash
 # Make commands installed in your user directory available to the current shell.
 export PATH="$HOME/.local/bin:$PATH"
-tiny
+lightweight-harness
 ```
 
-Run the same install command again to update. The default installation directory is `~/.local/share/tiny-cli`, and the executable is `~/.local/bin/tiny`. The installer does not automatically change provider settings or shell profiles. If it conflicts with an unrelated existing `tiny` command, installation stops with an explanation.
+Run the same install command again to update. The default installation directory is `~/.local/share/lightweight-harness`, and the executable is `~/.local/bin/lightweight-harness`. The installer does not automatically change provider settings or shell profiles. If it conflicts with an unrelated existing `lightweight-harness` command, installation stops with an explanation.
 
 To inspect the script first or install a particular tag or commit:
 
 ```bash
 # Download the script to review its behavior and supported options before installing.
-curl -fsSL https://raw.githubusercontent.com/highsun9941/Tiny-CLI/main/install.sh -o install.sh
+curl -fsSL https://raw.githubusercontent.com/highsun9941/Lightweight-Harness/main/install.sh -o install.sh
 less install.sh
 bash install.sh --help
 # Replace main with the Git ref you want to install.
 bash install.sh --ref main
 ```
 
-Set `TINY_CLI_INSTALL_DIR` to choose the installation directory and `TINY_CLI_BIN_DIR` to choose the executable directory. Both must be absolute paths; use the same values when reinstalling. You can also select a Git ref with `TINY_CLI_REF`. When piping the script, pass environment variables to `bash`:
+Set `LIGHTWEIGHT_HARNESS_INSTALL_DIR` to choose the installation directory and `LIGHTWEIGHT_HARNESS_BIN_DIR` to choose the executable directory. Both must be absolute paths; use the same values when reinstalling. You can also select a Git ref with `LIGHTWEIGHT_HARNESS_REF`. When piping the script, pass environment variables to `bash`:
 
 ```bash
 # Set the ref for bash on the receiving side of the pipe.
-curl -fsSL https://raw.githubusercontent.com/highsun9941/Tiny-CLI/main/install.sh | TINY_CLI_REF=main bash
+curl -fsSL https://raw.githubusercontent.com/highsun9941/Lightweight-Harness/main/install.sh | LIGHTWEIGHT_HARNESS_REF=main bash
 ```
 
 If you already have Python 3.12 or later and pipx, you can install directly:
 
 ```bash
-# Install repository source in pipx's isolated environment, rather than the unrelated PyPI package.
-pipx install 'git+https://github.com/highsun9941/Tiny-CLI.git'
+# Install this repository's source in pipx's isolated environment.
+pipx install 'git+https://github.com/highsun9941/Lightweight-Harness.git'
 ```
 
 For development, install from a source checkout:
 
 ```bash
 # Prepare a development environment that uses your local source changes.
-git clone https://github.com/highsun9941/Tiny-CLI.git
-cd Tiny-CLI
+git clone https://github.com/highsun9941/Lightweight-Harness.git
+cd Lightweight-Harness
 # Isolate dependencies from system Python and use an editable install.
 python -m venv .venv
 source .venv/bin/activate
 pip install -e .
-tiny
+lightweight-harness
 ```
 
-The directory you launch Tiny-CLI from is its working directory. In a source installation, `python -m tiny_cli` starts the same UI. To avoid installing an unrelated package with the same name, use the installer, repository URL, or source path shown above.
+The directory you launch Lightweight-Harness from is its working directory. In a source installation, `python -m lightweight_harness` starts the same UI.
+
+When updating an existing installation, reinstall and place your provider configuration in `~/.config/lightweight-harness/config.toml`, or select its current location with `--config`. Project-specific environment variables now use the `LIGHTWEIGHT_HARNESS_` prefix.
 
 ## Core behavior
 
@@ -92,7 +94,7 @@ The runtime repeats the model response, tool execution, and result delivery cycl
 
 ## API provider profiles
 
-Define profiles in `~/.config/tiny-cli/config.toml`. Use `--config` or `TINY_CLI_CONFIG` to select a different file.
+Define profiles in `~/.config/lightweight-harness/config.toml`. Use `--config` or `LIGHTWEIGHT_HARNESS_CONFIG` to select a different file.
 
 ```toml
 # Use this profile when neither the CLI nor environment variables select another provider.
@@ -138,14 +140,14 @@ The default `api_format = "openai"` connects to servers that support the OpenAI-
 ```bash
 # Set the key referenced by the profile, then select a provider.
 export OPENROUTER_API_KEY=...
-tiny --provider openrouter
+lightweight-harness --provider openrouter
 # Override the config file and model for this run only.
-tiny --config /path/to/config.toml --provider anthropic --model YOUR_MODEL_ID
+lightweight-harness --config /path/to/config.toml --provider anthropic --model YOUR_MODEL_ID
 ```
 
-Provider selection follows this order: `--provider` → `TINY_CLI_PROVIDER` → `default_provider` → the first profile by name in alphabetical order. Model selection follows `--model` → `TINY_CLI_MODEL` → the profile's `model`. API keys are read from the environment variable named by `api_key_env`.
+Provider selection follows this order: `--provider` → `LIGHTWEIGHT_HARNESS_PROVIDER` → `default_provider` → the first profile by name in alphabetical order. Model selection follows `--model` → `LIGHTWEIGHT_HARNESS_MODEL` → the profile's `model`. API keys are read from the environment variable named by `api_key_env`.
 
-Environment-variable shortcuts are also supported. `OPENAI_API_KEY` or `TINY_CLI_API_KEY` creates an `openai` profile, and `OPENROUTER_API_KEY` creates an `openrouter` profile. `OPENAI_BASE_URL` overrides the default OpenAI-compatible endpoint. A TOML profile with the same name overrides the corresponding shortcut profile.
+Environment-variable shortcuts are also supported. `OPENAI_API_KEY` or `LIGHTWEIGHT_HARNESS_API_KEY` creates an `openai` profile, and `OPENROUTER_API_KEY` creates an `openrouter` profile. `OPENAI_BASE_URL` overrides the default OpenAI-compatible endpoint. A TOML profile with the same name overrides the corresponding shortcut profile.
 
 UI commands:
 
@@ -172,9 +174,9 @@ enabled = ["my_plugin:setup"]
 
 ```bash
 # Append one plugin to the configured list.
-tiny --plugin my_plugin:setup
+lightweight-harness --plugin my_plugin:setup
 # In a separate run, disable all plugins selected through config or CLI options.
-tiny --no-plugins
+lightweight-harness --no-plugins
 ```
 
 Entries from `--plugin` are appended after the configured list, in order. Duplicate entry points run only once. `--no-plugins` ignores both lists. Plugins are not discovered or installed automatically.
@@ -187,16 +189,16 @@ See the [plugin authoring guide](docs/plugins.md) and [session logging example](
 
 ```bash
 # Build an image containing Python, Git, ripgrep, and the CLI.
-docker build -t tiny-cli .
+docker build -t lightweight-harness .
 # Match host file ownership and pass in the working directory and required environment variables.
 docker run --rm -it \
   --user "$(id -u):$(id -g)" \
   --cap-drop ALL --security-opt no-new-privileges \
   -v "$PWD:/workspace" \
   -e OPENROUTER_API_KEY \
-  -e TINY_CLI_PROVIDER=openrouter \
-  -e TINY_CLI_MODEL=openai/gpt-5 \
-  tiny-cli
+  -e LIGHTWEIGHT_HARNESS_PROVIDER=openrouter \
+  -e LIGHTWEIGHT_HARNESS_MODEL=openai/gpt-5 \
+  lightweight-harness
 ```
 
 On Linux, passing your host UID/GID with `--user` aligns file permissions for the mounted working directory. The image includes Python, Git, and ripgrep. Add any other runtimes your project needs to the image.
@@ -209,17 +211,17 @@ docker run --rm -it \
   --user "$(id -u):$(id -g)" \
   --cap-drop ALL --security-opt no-new-privileges \
   -v "$PWD:/workspace" \
-  -v "$HOME/.config/tiny-cli/config.toml:/tmp/tiny-config.toml:ro" \
-  -e TINY_CLI_CONFIG=/tmp/tiny-config.toml \
+  -v "$HOME/.config/lightweight-harness/config.toml:/tmp/lightweight-harness-config.toml:ro" \
+  -e LIGHTWEIGHT_HARNESS_CONFIG=/tmp/lightweight-harness-config.toml \
   -e ANTHROPIC_API_KEY \
-  tiny-cli --provider anthropic
+  lightweight-harness --provider anthropic
 ```
 
 Compose uses this repository as the working directory by default:
 
 ```bash
 # Match host file ownership and rebuild the image from the current source.
-TINY_UID="$(id -u)" TINY_GID="$(id -g)" docker compose run --rm --build tiny
+LIGHTWEIGHT_HARNESS_UID="$(id -u)" LIGHTWEIGHT_HARNESS_GID="$(id -g)" docker compose run --rm --build lightweight-harness
 ```
 
 Docker separates the execution environment, but the process can still access writable mounts and any keys passed into it. Mount only the working directory and pass only the keys you need. Inside a container, `localhost` refers to that container. To connect to a model server on the host, use a host address appropriate for your environment.
@@ -229,55 +231,55 @@ Docker separates the execution environment, but the process can still access wri
 These are the files used to run, install, configure, and verify the project, with their roles noted alongside them.
 
 ```text
-Tiny-CLI/
-├── tiny_cli/                  # CLI runtime core
-│   ├── __init__.py            # Package version
-│   ├── __main__.py            # Entry point for python -m tiny_cli
-│   ├── app.py                 # CLI options, config loading, and UI startup
-│   ├── tui.py                 # Terminal UI, user commands, and provider/session switching
-│   ├── agent.py               # Model request → tool execution → result delivery loop
-│   ├── tools.py               # Definition and execution of the sole built-in tool, run_command
-│   ├── providers.py           # API provider and model selection from TOML and environment variables
-│   ├── transport.py           # OpenAI-compatible and Anthropic request/response conversion
-│   └── plugins.py             # Loading of explicitly selected module:setup plugins
-├── examples/                  # Configuration and plugin examples for users to opt into
-│   ├── config.toml            # API provider profiles and plugin configuration examples
+Lightweight-Harness/
+├── lightweight_harness/      # CLI runtime core
+│   ├── __init__.py           # Package version
+│   ├── __main__.py           # Entry point for python -m lightweight_harness
+│   ├── app.py                # CLI options, config loading, and UI startup
+│   ├── tui.py                # Terminal UI, user commands, and provider/session switching
+│   ├── agent.py              # Model request → tool execution → result delivery loop
+│   ├── tools.py              # Definition and execution of the sole built-in tool, run_command
+│   ├── providers.py          # API provider and model selection from TOML and environment variables
+│   ├── transport.py          # OpenAI-compatible and Anthropic request/response conversion
+│   └── plugins.py            # Loading of explicitly selected module:setup plugins
+├── examples/                 # Configuration and plugin examples for users to opt into
+│   ├── config.toml           # API provider profiles and plugin configuration examples
 │   └── plugins/
-│       └── session_log.py     # Optional plugin that saves completed conversations as JSONL
+│       └── session_log.py    # Optional plugin that saves completed conversations as JSONL
 ├── docs/
-│   └── plugins.md             # Plugin authoring guide, extension API, and runnable example
-├── tests/                     # Automated tests that do not require real API keys
-│   ├── conftest.py            # Isolation from personal configuration and credential variables
-│   ├── test_agent.py          # Model/tool loop, error results, and plugin selection
-│   ├── test_tools.py          # Shell file operations, exit codes/output, and removed tools
-│   ├── test_transport.py      # OpenAI/Anthropic requests and tool-call round trips
-│   ├── test_providers.py      # Provider configuration, selection precedence, and authentication
-│   ├── test_config.py         # CLI options and forwarding of config/plugin selections
-│   ├── test_tui.py            # UI provider/session switching and overlapping request handling
-│   └── test_installer.py      # Installation, reinstallation, uv bootstrap, and failure handling
+│   └── plugins.md            # Plugin authoring guide, extension API, and runnable example
+├── tests/                    # Automated tests that do not require real API keys
+│   ├── conftest.py           # Isolation from personal configuration and credential variables
+│   ├── test_agent.py         # Model/tool loop, error results, and plugin selection
+│   ├── test_tools.py         # Shell file operations, exit codes/output, and removed tools
+│   ├── test_transport.py     # OpenAI/Anthropic requests and tool-call round trips
+│   ├── test_providers.py     # Provider configuration, selection precedence, and authentication
+│   ├── test_config.py        # CLI options and forwarding of config/plugin selections
+│   ├── test_tui.py           # UI provider/session switching and overlapping request handling
+│   └── test_installer.py     # Installation, reinstallation, uv bootstrap, and failure handling
 ├── .github/workflows/
-│   └── ci.yml                 # Tests and Linux/macOS installation and reinstallation CI
-├── install.sh                 # curl installer, uv/Python setup, and installation/updates
-├── pyproject.toml             # Package metadata, dependencies, and tiny command registration
-├── tiny_cli.py                # Compatibility entry point for python tiny_cli.py
-├── Dockerfile                 # Runtime image with Python, Git, and ripgrep
-├── docker-compose.yml         # Container configuration for the working directory and environment
-├── .dockerignore              # Files excluded from the Docker build context
-├── .gitignore                 # Local environments, caches, and environment files excluded from Git
-├── README.md                  # English guide: project direction, installation, usage, and structure
-└── README.ko.md               # Korean guide: project direction, installation, usage, and structure
+│   └── ci.yml                # Tests and Linux/macOS installation and reinstallation CI
+├── install.sh                # curl installer, uv/Python setup, and installation/updates
+├── pyproject.toml            # Package metadata, dependencies, and lightweight-harness command registration
+├── lightweight_harness.py    # Direct script entry point for python lightweight_harness.py
+├── Dockerfile                # Runtime image with Python, Git, and ripgrep
+├── docker-compose.yml        # Container configuration for the working directory and environment
+├── .dockerignore             # Files excluded from the Docker build context
+├── .gitignore                # Local environments, caches, and environment files excluded from Git
+├── README.md                 # English guide: project direction, installation, usage, and structure
+└── README.ko.md              # Korean guide: project direction, installation, usage, and structure
 ```
 
-Both `tiny` and `python -m tiny_cli` enter through `main()` in `app.py`. `tui.py` passes user input to `agent.py`, which communicates with the model through `transport.py` and executes shell commands through `tools.py`. Configuration and plugins in `examples/` are available for users to select explicitly.
+Both `lightweight-harness` and `python -m lightweight_harness` enter through `main()` in `app.py`. `tui.py` passes user input to `agent.py`, which communicates with the model through `transport.py` and executes shell commands through `tools.py`. Configuration and plugins in `examples/` are available for users to select explicitly.
 
 ## Development and verification
 
 ```bash
 # Install test dependencies, then check Python syntax, automated tests, and the CLI entry point.
 pip install -e '.[dev]'
-python -m compileall -q tiny_cli
+python -m compileall -q lightweight_harness
 pytest -q
-python -m tiny_cli --help
+python -m lightweight_harness --help
 ```
 
 Tests use mock HTTP transports to verify the absence of default prompts, exposure of only `run_command`, tool error results, provider profile selection, OpenAI/Anthropic tool-call round trips, plugin selection, and UI session switching. They also check shell-based file operations and the return of exit codes, standard output, and standard error. No real API calls or API keys are required.

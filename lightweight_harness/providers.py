@@ -9,7 +9,7 @@ from typing import Any
 
 
 # 프로젝트 파일을 자동 탐색하지 않고 사용자 설정 경로 하나를 기본값으로 사용한다.
-DEFAULT_CONFIG = Path.home() / ".config" / "tiny-cli" / "config.toml"
+DEFAULT_CONFIG = Path.home() / ".config" / "lightweight-harness" / "config.toml"
 
 
 @dataclass(frozen=True)
@@ -49,19 +49,19 @@ class ProviderConfig:
 def _builtins() -> dict[str, ProviderConfig]:
     # TOML 없이 시작할 수 있게 알려진 키 환경변수에 대해서만 기본 프로필을 만든다.
     providers: dict[str, ProviderConfig] = {}
-    if os.getenv("OPENAI_API_KEY") or os.getenv("TINY_CLI_API_KEY"):
-        # 기존 Tiny-CLI 키가 있으면 우선 사용하고, 빈 주소·모델 변수는 기본값으로 보완한다.
-        providers["openai"] = ProviderConfig("OpenAI", os.getenv("OPENAI_BASE_URL") or "https://api.openai.com/v1", "TINY_CLI_API_KEY" if os.getenv("TINY_CLI_API_KEY") else "OPENAI_API_KEY", os.getenv("TINY_CLI_MODEL") or "gpt-5")
+    if os.getenv("OPENAI_API_KEY") or os.getenv("LIGHTWEIGHT_HARNESS_API_KEY"):
+        # Lightweight-Harness 전용 키가 있으면 우선 사용하고, 빈 주소·모델 변수는 기본값으로 보완한다.
+        providers["openai"] = ProviderConfig("OpenAI", os.getenv("OPENAI_BASE_URL") or "https://api.openai.com/v1", "LIGHTWEIGHT_HARNESS_API_KEY" if os.getenv("LIGHTWEIGHT_HARNESS_API_KEY") else "OPENAI_API_KEY", os.getenv("LIGHTWEIGHT_HARNESS_MODEL") or "gpt-5")
     if os.getenv("OPENROUTER_API_KEY"):
         # OpenRouter도 동일한 OpenAI 호환 전송을 사용하며 주소와 모델 이름만 다르다.
-        providers["openrouter"] = ProviderConfig("OpenRouter", "https://openrouter.ai/api/v1", "OPENROUTER_API_KEY", os.getenv("TINY_CLI_MODEL") or "openai/gpt-5")
+        providers["openrouter"] = ProviderConfig("OpenRouter", "https://openrouter.ai/api/v1", "OPENROUTER_API_KEY", os.getenv("LIGHTWEIGHT_HARNESS_MODEL") or "openai/gpt-5")
     return providers
 
 
 def load_config(path: Path | None = None) -> dict[str, Any]:
     # CLI 경로 → 환경변수 → 기본 경로 순서로 선택한다.
-    explicit_path = path is not None or bool(os.getenv("TINY_CLI_CONFIG"))
-    path = path or Path(os.getenv("TINY_CLI_CONFIG") or DEFAULT_CONFIG)
+    explicit_path = path is not None or bool(os.getenv("LIGHTWEIGHT_HARNESS_CONFIG"))
+    path = path or Path(os.getenv("LIGHTWEIGHT_HARNESS_CONFIG") or DEFAULT_CONFIG)
     if path.exists():
         # 표준 라이브러리로 TOML을 읽어 설정 파서 의존성을 추가하지 않는다.
         return tomllib.loads(path.read_text(encoding="utf-8"))
@@ -109,8 +109,8 @@ def resolve_provider(
     data = load_config(path)
     providers = _configured_providers(data)
     # 제공자는 CLI → 환경변수 → 설정 기본값, 모델은 CLI → 환경변수 → 프로필 순서다.
-    name = provider_name or os.getenv("TINY_CLI_PROVIDER") or data.get("default_provider")
-    model = model or os.getenv("TINY_CLI_MODEL")
+    name = provider_name or os.getenv("LIGHTWEIGHT_HARNESS_PROVIDER") or data.get("default_provider")
+    model = model or os.getenv("LIGHTWEIGHT_HARNESS_MODEL")
     if name:
         if name not in providers:
             # 지정한 제공자가 없을 때 다른 서버로 임의 연결하지 않고 선택 오류를 알린다.
@@ -120,7 +120,7 @@ def resolve_provider(
         # 기존 불변 프로필을 보존하면서 이번 선택에만 모델 재정의를 반영한다.
         return replace(provider, model=model or provider.model)
     if not providers:
-        raise NoProviderError("No provider configured. Add one to ~/.config/tiny-cli/config.toml or set a supported API key environment variable.")
+        raise NoProviderError("No provider configured. Add one to ~/.config/lightweight-harness/config.toml or set a supported API key environment variable.")
     # 기본값을 지정하지 않아도 매번 같은 프로필을 고르도록 키 이름순으로 선택한다.
     first = providers[sorted(providers)[0]]
     return replace(first, model=model or first.model)
