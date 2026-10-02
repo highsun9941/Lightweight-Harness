@@ -29,9 +29,9 @@ Input { border: none; background: transparent; }
 """
 
 
-class TinyApp(App[None]):
+class LightweightHarnessApp(App[None]):
     # 표시 문구와 스타일은 UI에만 사용되며 모델 프롬프트에는 포함되지 않는다.
-    TITLE = "Tiny-CLI"
+    TITLE = "Lightweight-Harness"
     SUB_TITLE = "The model decides. The runtime executes."
     CSS = CSS
 
@@ -66,10 +66,10 @@ class TinyApp(App[None]):
         if self.provider:
             self._activate(self.provider)
             if self.agent:
-                self._add("assistant", "Tiny-CLI ready. Use /help for commands.")
+                self._add("assistant", "Lightweight-Harness ready. Use /help for commands.")
         else:
             status.update("No provider configured")
-            self._add("error", "No provider configured. Add ~/.config/tiny-cli/config.toml or set an API key environment variable.")
+            self._add("error", "No provider configured. Add ~/.config/lightweight-harness/config.toml or set an API key environment variable.")
             self._add("assistant", "Run /help for commands.")
         # 실행 권한에 대한 안내일 뿐 실제 명령 승인이나 차단 기능은 아니다.
         self._add("tool", "Shell commands and file writes run without approval. Docker is recommended.")
@@ -211,4 +211,4 @@ class TinyApp(App[None]):
 
 def run(provider: ProviderConfig | None = None, *, config_path: Path | None = None, plugins: list[str] | None = None) -> None:
     # argparse나 외부 호출부가 Textual 객체 생성 세부 사항을 알 필요 없도록 감싼다.
-    TinyApp(provider, config_path=config_path, plugins=plugins).run()
+    LightweightHarnessApp(provider, config_path=config_path, plugins=plugins).run()

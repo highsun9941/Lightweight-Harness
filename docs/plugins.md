@@ -1,13 +1,13 @@
 # Community plugins
 
-Tiny-CLI supplies one shell tool (`run_command`) and an in-process conversation by default. No plugin,
+Lightweight-Harness supplies one shell tool (`run_command`) and an in-process conversation by default. No plugin,
 prompt, memory file, skill, or context policy is loaded implicitly. The following
 small Python API is experimental; community distribution and compatibility
 conventions are still planned.
 
 ## Loading
 
-Install your package into the same Python environment as Tiny-CLI, then opt in:
+Install your package into the same Python environment as Lightweight-Harness, then opt in:
 
 ```toml
 [plugins]
@@ -15,8 +15,8 @@ Install your package into the same Python environment as Tiny-CLI, then opt in:
 enabled = ["my_package:setup", "another_package:setup"]
 ```
 
-Or use `tiny --plugin my_package:setup`. Config entries run first, followed by CLI
-entries, with duplicate strings removed. `tiny --no-plugins` disables both. There
+Or use `lightweight-harness --plugin my_package:setup`. Config entries run first, followed by CLI
+entries, with duplicate strings removed. `lightweight-harness --no-plugins` disables both. There
 is no package discovery, repository scan, dependency installer, or plugin registry
 in the core. Missing modules and setup failures are visible errors; a failed
 provider switch keeps the existing session.
@@ -94,19 +94,19 @@ Avoid retaining long-lived external resources that require one.
 
 ## Runnable example
 
-From a source checkout with Tiny-CLI installed:
+From a source checkout with Lightweight-Harness installed:
 
 ```bash
 # 예제 모듈을 import할 경로를 이번 실행에만 추가하고 로그 플러그인을 명시적으로 선택한다.
-PYTHONPATH="$PWD/examples/plugins" tiny --plugin session_log:setup
+PYTHONPATH="$PWD/examples/plugins" lightweight-harness --plugin session_log:setup
 ```
 
 The bundled [session logger](../examples/plugins/session_log.py) writes the entire
-conversation as one JSON record per completed turn to `tiny-session.jsonl` in the
+conversation as one JSON record per completed turn to `lightweight-harness-session.jsonl` in the
 working directory. It does not restore history or add a prompt/tool. It is never
 loaded automatically. Logs include user content and tool outputs, so enable this
 only when you want those recorded.
 
 Plugins execute ordinary Python with the same filesystem, environment, network,
-and shell access as Tiny-CLI. Docker is recommended for both the bare CLI and any
+and shell access as Lightweight-Harness. Docker is recommended for both the bare CLI and any
 selected plugins.

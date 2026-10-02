@@ -1,4 +1,4 @@
-# python -m tiny_cli도 설치된 tiny 명령과 동일한 CLI를 실행한다.
+# python -m lightweight_harness도 설치된 lightweight-harness 명령과 동일한 CLI를 실행한다.
 from .app import main
 
 if __name__ == "__main__":

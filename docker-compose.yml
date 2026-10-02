@@ -1,22 +1,22 @@
 # 로컬 저장소를 작업 공간으로 연결해 대화형 CLI를 실행하는 예제다.
 services:
-  tiny:
+  lightweight-harness:
     # 이 저장소의 Dockerfile로 이미지를 만들고 셸 명령의 시작 위치를 맞춘다.
     build: .
     working_dir: /workspace
     # 쓰기 가능한 마운트에서 호스트 파일 소유권을 맞추려면 호스트 UID/GID를 전달한다.
-    user: "${TINY_UID:-10001}:${TINY_GID:-10001}"
+    user: "${LIGHTWEIGHT_HARNESS_UID:-10001}:${LIGHTWEIGHT_HARNESS_GID:-10001}"
     # Textual이 키보드 입력과 터미널 화면을 사용할 수 있게 표준 입력과 TTY를 유지한다.
     stdin_open: true
     tty: true
     environment:
       # 선택한 환경변수만 전달한다. 호스트에 값이 없으면 빈 문자열이 들어간다.
-      TINY_CLI_PROVIDER: ${TINY_CLI_PROVIDER:-}
-      TINY_CLI_MODEL: ${TINY_CLI_MODEL:-}
+      LIGHTWEIGHT_HARNESS_PROVIDER: ${LIGHTWEIGHT_HARNESS_PROVIDER:-}
+      LIGHTWEIGHT_HARNESS_MODEL: ${LIGHTWEIGHT_HARNESS_MODEL:-}
       OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
-      TINY_CLI_API_KEY: ${TINY_CLI_API_KEY:-}
+      LIGHTWEIGHT_HARNESS_API_KEY: ${LIGHTWEIGHT_HARNESS_API_KEY:-}
     volumes:
       # 현재 저장소를 쓰기 가능하게 연결한다. 모델이 이 경로에서 수정한 파일은 호스트에도 반영된다.
       - .:/workspace

@@ -4,8 +4,8 @@ import threading
 
 from textual.widgets import Input
 
-from tiny_cli.providers import ProviderConfig
-from tiny_cli.tui import TinyApp
+from lightweight_harness.providers import ProviderConfig
+from lightweight_harness.tui import LightweightHarnessApp
 
 
 class FakeAgent:
@@ -34,12 +34,12 @@ base_url = "http://localhost/v1"
 api_key_env = ""
 model = "second-model"
 ''')
-    monkeypatch.setattr("tiny_cli.tui.Agent", FakeAgent)
+    monkeypatch.setattr("lightweight_harness.tui.Agent", FakeAgent)
     first = ProviderConfig("First", "http://localhost/v1", "", "first-model")
 
     async def scenario():
         # 실제 터미널 없이 위젯 생명주기와 명령 처리를 실행한다.
-        app = TinyApp(first, config_path=config, plugins=["example:setup"])
+        app = LightweightHarnessApp(first, config_path=config, plugins=["example:setup"])
         async with app.run_test() as pilot:
             old = app.agent
             app._command("/use second override")
@@ -77,12 +77,12 @@ def test_busy_task_does_not_start_overlapping_requests(monkeypatch):
             started.set()
             release.wait(timeout=5)
 
-    monkeypatch.setattr("tiny_cli.tui.Agent", SlowAgent)
+    monkeypatch.setattr("lightweight_harness.tui.Agent", SlowAgent)
     provider = ProviderConfig("Test", "http://localhost/v1", "", "model")
 
     async def scenario():
         # Textual 작업 스레드와 UI 입력 이벤트가 겹치는 상황을 만든다.
-        app = TinyApp(provider)
+        app = LightweightHarnessApp(provider)
         async with app.run_test() as pilot:
             composer = app.query_one(Input)
             app.on_input_submitted(Input.Submitted(composer, "first"))

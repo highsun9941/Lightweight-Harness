@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from tiny_cli.providers import ProviderConfig, load_config, load_providers, resolve_provider
+from lightweight_harness.providers import ProviderConfig, load_config, load_providers, resolve_provider
 
 
 def test_load_custom_provider(tmp_path: Path):
@@ -39,7 +39,7 @@ model = "custom-model"
         + "\n",
         encoding="utf-8",
     )
-    monkeypatch.setattr("tiny_cli.providers.DEFAULT_CONFIG", config)
+    monkeypatch.setattr("lightweight_harness.providers.DEFAULT_CONFIG", config)
     provider = resolve_provider("custom")
     assert provider.name == "Custom"
     assert provider.model == "custom-model"
@@ -60,23 +60,23 @@ model = "configured-model"
 api_format = "anthropic"
 max_tokens = 8192
 ''')
-    monkeypatch.setenv("TINY_CLI_CONFIG", str(config))
+    monkeypatch.setenv("LIGHTWEIGHT_HARNESS_CONFIG", str(config))
     assert resolve_provider().model == "configured-model"
     # 모델은 프로필 → 환경변수 → CLI 순서로 덮어쓰되 전송 형식과 토큰 상한은 보존해야 한다.
-    monkeypatch.setenv("TINY_CLI_MODEL", "env-model")
+    monkeypatch.setenv("LIGHTWEIGHT_HARNESS_MODEL", "env-model")
     assert resolve_provider().model == "env-model"
     selected = resolve_provider(model="cli-model")
     assert selected.model == "cli-model"
     assert selected.api_format == "anthropic" and selected.max_tokens == 8192
     # 제공자 환경변수와 명시적 이름의 우선순위, 무인증 선택도 확인한다.
-    monkeypatch.setenv("TINY_CLI_PROVIDER", "a")
+    monkeypatch.setenv("LIGHTWEIGHT_HARNESS_PROVIDER", "a")
     assert resolve_provider().api_key() == ""
     assert resolve_provider("z").api_format == "anthropic"
 
 
 def test_empty_compose_environment_uses_builtin_defaults(monkeypatch):
     # Compose의 ${VAR:-}가 만드는 빈 문자열도 환경변수 미설정과 같은 기본값을 사용해야 한다.
-    monkeypatch.setenv("TINY_CLI_MODEL", "")
+    monkeypatch.setenv("LIGHTWEIGHT_HARNESS_MODEL", "")
     monkeypatch.setenv("OPENAI_BASE_URL", "")
     monkeypatch.setenv("OPENAI_API_KEY", "test")
     assert resolve_provider().model == "gpt-5"
